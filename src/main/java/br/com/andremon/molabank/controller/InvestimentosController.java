@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +32,12 @@ public class InvestimentosController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Investimento não encontrado. Tente novamente.");
         }
 
-        BigDecimal rendimento = new BigDecimal(String.valueOf(getRendimentoMap.add(BigDecimal.ONE)));
+        BigDecimal rendimento;
+        rendimento = new BigDecimal(String.valueOf(getRendimentoMap.divide(BigDecimal.valueOf(100), MathContext.UNLIMITED).add(BigDecimal.ONE)));
         BigDecimal valorRendido;
 
         valorRendido = valorASerRendido.multiply(rendimento);
 
-        return ResponseEntity.status(HttpStatus.OK).body(valorRendido.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(valorRendido.setScale(2, RoundingMode.HALF_UP).toPlainString());
     }
 }
